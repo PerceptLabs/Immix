@@ -1,4 +1,4 @@
-# Multi-stage Dockerfile for CustomGPT UI
+# Multi-stage Dockerfile for Immix UI
 # Supports flexible deployment: standalone app, widget only, or iframe only
 
 # ============================================
@@ -118,7 +118,7 @@ EOF
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost/customgpt-widget.js || exit 1
+  CMD curl -f http://localhost/immix-widget.js || exit 1
 
 EXPOSE 80
 

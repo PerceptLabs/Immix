@@ -18,12 +18,12 @@ import { FloatingButton } from './FloatingButton';
 /**
  * Widget Configuration Interface
  * 
- * Defines all configuration options for CustomGPT widget initialization.
+ * Defines all configuration options for Immix widget initialization.
  * This interface is used by both embedded widgets and floating buttons.
  * 
- * @property agentId - Required: Agent/Project ID from CustomGPT dashboard
+ * @property agentId - Required: Agent/Project ID from Immix dashboard
  * @property apiKey - Optional: API key for direct mode (bypasses proxy server)
- * @property apiUrl - Optional: Base URL for API (proxy URL or CustomGPT API URL)
+ * @property apiUrl - Optional: Base URL for API (proxy URL or Immix API URL)
  * @property useProxy - Optional: Force proxy mode even with API key (default: false)
  * @property agentName - Optional: Custom name to display instead of "Agent - {ID}"
  * @property containerId - DOM element ID for embedded mode (ignored in floating mode)
@@ -48,13 +48,13 @@ import { FloatingButton } from './FloatingButton';
  * @property onMessage - Called when new message is sent/received
  * @property onConversationChange - Called when conversation switches
  */
-export interface CustomGPTWidgetConfig {
+export interface ImmixWidgetConfig {
   // Required properties
   agentId: number | string;
   
   // API Configuration
   apiKey?: string; // API key for direct mode (bypasses proxy)
-  apiUrl?: string; // Base URL for the API server (defaults to CustomGPT API or proxy)
+  apiUrl?: string; // Base URL for the API server (defaults to Immix API or proxy)
   useProxy?: boolean; // Whether to use proxy mode (default: true if no apiKey)
   
   // Display properties
@@ -91,17 +91,17 @@ export interface CustomGPTWidgetConfig {
 }
 
 /**
- * CustomGPT Widget Class
+ * Immix Widget Class
  * 
- * Main widget class that manages the lifecycle of CustomGPT chat instances.
+ * Main widget class that manages the lifecycle of Immix chat instances.
  * Supports both embedded and floating deployment modes with full conversation management.
  * Can operate in two modes:
  * - Proxy mode (default): Communicates through a Next.js server proxy
- * - Direct mode: Communicates directly with CustomGPT API using provided API key
+ * - Direct mode: Communicates directly with Immix API using provided API key
  * 
  * @example
  * // Basic embedded widget (proxy mode)
- * const widget = CustomGPTWidget.init({
+ * const widget = ImmixWidget.init({
  *   agentId: '123',
  *   containerId: 'chat-container',
  *   apiUrl: 'https://your-nextjs-app.com'
@@ -109,7 +109,7 @@ export interface CustomGPTWidgetConfig {
  * 
  * @example
  * // Direct mode with API key (no proxy needed)
- * const widget = CustomGPTWidget.init({
+ * const widget = ImmixWidget.init({
  *   agentId: '123',
  *   apiKey: 'your-api-key',
  *   mode: 'floating',
@@ -118,17 +118,17 @@ export interface CustomGPTWidgetConfig {
  * 
  * @example
  * // Floating widget with conversation management
- * const widget = CustomGPTWidget.init({
+ * const widget = ImmixWidget.init({
  *   agentId: '123',
  *   mode: 'floating',
  *   enableConversationManagement: true,
  *   maxConversations: 10
  * });
  */
-class CustomGPTWidget {
+class ImmixWidget {
   private container: HTMLElement | null = null;
   private root: any = null;
-  private config: CustomGPTWidgetConfig;
+  private config: ImmixWidgetConfig;
   private isOpen: boolean = false;
   public sessionId: string;
   private currentConversationId: string | null = null;
@@ -138,11 +138,11 @@ class CustomGPTWidget {
   private floatingButtonRoot: any = null;
   private agentAvatar: string | null = null;
 
-  constructor(config: CustomGPTWidgetConfig) {
+  constructor(config: ImmixWidgetConfig) {
     // Validate required fields
     
     if (!config.agentId) {
-      throw new Error('CustomGPT Widget: Agent ID is required');
+      throw new Error('Immix Widget: Agent ID is required');
     }
 
     // Merge with defaults
@@ -165,7 +165,7 @@ class CustomGPTWidget {
       this.sessionId = `widget_session_${this.config.agentId}`;
       
       // Also store this as the persistent session for this agent
-      localStorage.setItem(`customgpt_widget_session_${this.config.agentId}`, this.sessionId);
+      localStorage.setItem(`immix_widget_session_${this.config.agentId}`, this.sessionId);
     } else if (this.config.isolateConversations !== false) {
       // For other modes with isolated conversations, create unique session
       const modePrefix = this.config.mode || 'widget';
@@ -187,19 +187,19 @@ class CustomGPTWidget {
     // Store widget instance reference for conversation management
     // Use unique instance key to prevent conflicts between multiple widgets
     if (typeof window !== 'undefined') {
-      const instanceKey = `__customgpt_widget_${this.sessionId}`;
+      const instanceKey = `__immix_widget_${this.sessionId}`;
       (window as any)[instanceKey] = this;
       
       // Also store in instances object for easier access
-      if (!(window as any).__customgpt_widget_instances) {
-        (window as any).__customgpt_widget_instances = {};
+      if (!(window as any).__immix_widget_instances) {
+        (window as any).__immix_widget_instances = {};
       }
-      (window as any).__customgpt_widget_instances[this.sessionId] = this;
+      (window as any).__immix_widget_instances[this.sessionId] = this;
       
       // DEPRECATED: Global reference kept for backward compatibility
       // Don't overwrite if already exists to preserve first widget
-      if (!(window as any).__customgpt_widget_instance) {
-        (window as any).__customgpt_widget_instance = this;
+      if (!(window as any).__immix_widget_instance) {
+        (window as any).__immix_widget_instance = this;
       }
       
       // Store instance key for later reference
@@ -225,11 +225,11 @@ class CustomGPTWidget {
     const useDirectMode = this.config.apiKey && (this.config.useProxy !== true);
     
     if (useDirectMode) {
-      // Direct mode - API key provided, communicate directly with CustomGPT
+      // Direct mode - API key provided, communicate directly with Immix
       initializeClient({
         mode: 'direct',
         apiKey: this.config.apiKey,
-        apiUrl: this.config.apiUrl || 'https://app.customgpt.ai/api/v1'
+        apiUrl: this.config.apiUrl || 'https://app.immix.ai/api/v1'
       });
     } else {
       // Proxy mode - use Next.js server proxy
@@ -241,7 +241,7 @@ class CustomGPTWidget {
       
       // Store globally for the API client to pick up
       if (proxyUrl) {
-        (window as any).__customgpt_api_url = proxyUrl;
+        (window as any).__immix_api_url = proxyUrl;
       }
     }
     
@@ -251,17 +251,17 @@ class CustomGPTWidget {
       // If isolateConversations is true, use instance-specific session storage
       if (this.config.isolateConversations) {
         // Create instance-specific session object
-        if (!(window as any).__customgpt_sessions) {
-          (window as any).__customgpt_sessions = {};
+        if (!(window as any).__immix_sessions) {
+          (window as any).__immix_sessions = {};
         }
-        (window as any).__customgpt_sessions[this.sessionId] = {
+        (window as any).__immix_sessions[this.sessionId] = {
           sessionId: this.sessionId,
           maxConversations: this.config.maxConversations,
           enableConversationManagement: true
         };
       } else {
         // Use shared session (old behavior)
-        (window as any).__customgpt_session = {
+        (window as any).__immix_session = {
           sessionId: this.sessionId,
           maxConversations: this.config.maxConversations,
           enableConversationManagement: true
@@ -274,10 +274,10 @@ class CustomGPTWidget {
     
     // Store demo mode flag for preventing unnecessary API calls
     if (isDemoMode) {
-      (window as any).__customgpt_demo_mode = true;
+      (window as any).__immix_demo_mode = true;
     } else {
       // Ensure demo mode is disabled for valid API keys
-      (window as any).__customgpt_demo_mode = false;
+      (window as any).__immix_demo_mode = false;
     }
     
     // Agent initialization is now handled by the widget-specific store
@@ -296,7 +296,7 @@ class CustomGPTWidget {
     this.render();
     
     // For widget mode, always ensure a single conversation exists and is persisted
-    const persistedConversationId = localStorage.getItem(`customgpt_widget_conversation_${this.config.agentId}`);
+    const persistedConversationId = localStorage.getItem(`immix_widget_conversation_${this.config.agentId}`);
     
     // Load existing conversations for this session
     const existingConversations = this.getConversations();
@@ -312,7 +312,7 @@ class CustomGPTWidget {
         // Update the widget conversation store after a delay to ensure components are mounted
         setTimeout(async () => {
           if (typeof window !== 'undefined') {
-            const widgetStores = (window as any).__customgpt_widget_stores;
+            const widgetStores = (window as any).__immix_widget_stores;
             if (widgetStores && widgetStores[this.sessionId]) {
               const conversationStore = widgetStores[this.sessionId].conversationStore;
               const messageStore = widgetStores[this.sessionId].messageStore;
@@ -359,7 +359,7 @@ class CustomGPTWidget {
         setTimeout(async () => {
           const newConversation = await this.createConversation('Chat');
           if (newConversation) {
-            localStorage.setItem(`customgpt_widget_conversation_${this.config.agentId}`, newConversation.id.toString());
+            localStorage.setItem(`immix_widget_conversation_${this.config.agentId}`, newConversation.id.toString());
           }
         }, 100);
       }
@@ -369,7 +369,7 @@ class CustomGPTWidget {
         const newConversation = await this.createConversation('Chat');
         if (newConversation) {
           // Persist the conversation ID
-          localStorage.setItem(`customgpt_widget_conversation_${this.config.agentId}`, newConversation.id.toString());
+          localStorage.setItem(`immix_widget_conversation_${this.config.agentId}`, newConversation.id.toString());
         }
       }, 100);
     }
@@ -377,11 +377,11 @@ class CustomGPTWidget {
     // For isolated widgets, we need to prevent the global store from being used
     if (this.config.isolateConversations !== false && typeof window !== 'undefined') {
       // Store the widget instance globally so components can access it
-      (window as any).__customgpt_widget_instances = (window as any).__customgpt_widget_instances || {};
-      (window as any).__customgpt_widget_instances[this.sessionId] = this;
+      (window as any).__immix_widget_instances = (window as any).__immix_widget_instances || {};
+      (window as any).__immix_widget_instances[this.sessionId] = this;
       
       // Set the current active widget session
-      (window as any).__customgpt_active_widget_session = this.sessionId;
+      (window as any).__immix_active_widget_session = this.sessionId;
     }
   }
 
@@ -397,13 +397,13 @@ class CustomGPTWidget {
     } else if (mode === 'floating') {
       // Create floating container
       this.container = document.createElement('div');
-      this.container.id = 'customgpt-floating-widget';
+      this.container.id = 'immix-floating-widget';
       this.setupFloatingStyles();
       document.body.appendChild(this.container);
     } else {
       // Create default container
       this.container = document.createElement('div');
-      this.container.id = 'customgpt-widget';
+      this.container.id = 'immix-widget';
       document.body.appendChild(this.container);
     }
   }
@@ -428,7 +428,7 @@ class CustomGPTWidget {
     
     // Add class for styling
     this.container.classList.add('floating-mode');
-    this.container.classList.add('customgpt-floating-container');
+    this.container.classList.add('immix-floating-container');
 
     // Position-specific styles
     switch (position) {
@@ -493,7 +493,7 @@ class CustomGPTWidget {
     // Create button container if it doesn't exist
     if (!this.floatingButtonContainer) {
       this.floatingButtonContainer = document.createElement('div');
-      this.floatingButtonContainer.id = 'customgpt-floating-button-container';
+      this.floatingButtonContainer.id = 'immix-floating-button-container';
       document.body.appendChild(this.floatingButtonContainer);
     }
 
@@ -530,7 +530,7 @@ class CustomGPTWidget {
 
     // Apply proper styling based on mode
     if (this.config.mode === 'embedded') {
-      this.container.classList.add('customgpt-embedded-widget');
+      this.container.classList.add('immix-embedded-widget');
       // Apply width and height styles directly to container
       Object.assign(this.container.style, {
         width: this.config.width || '400px',
@@ -549,8 +549,8 @@ class CustomGPTWidget {
       // DEPRECATED: This global reference is kept for backward compatibility
       // New code should use WidgetContext instead
       // Only set if not already set to avoid overwriting first widget
-      if (typeof window !== 'undefined' && !(window as any).__customgpt_widget_instance) {
-        (window as any).__customgpt_widget_instance = this;
+      if (typeof window !== 'undefined' && !(window as any).__immix_widget_instance) {
+        (window as any).__immix_widget_instance = this;
       }
       
       const handleClose = () => {
@@ -570,7 +570,7 @@ class CustomGPTWidget {
       return (
         <WidgetStoreProvider sessionId={this.sessionId}>
           <WidgetProvider widgetInstance={widgetRef}>
-            <div className={`customgpt-widget-wrapper widget-mode ${this.config.mode}-mode`}>
+            <div className={`immix-widget-wrapper widget-mode ${this.config.mode}-mode`}>
               <ChatLayout
                 mode={this.config.mode === 'embedded' ? 'widget' : 'floating'}
                 onClose={this.config.mode === 'floating' ? handleClose : undefined}
@@ -612,7 +612,7 @@ class CustomGPTWidget {
    * @returns Array of conversations
    */
   public getConversations(): any[] {
-    const stored = localStorage.getItem(`customgpt_conversations_${this.sessionId}`);
+    const stored = localStorage.getItem(`immix_conversations_${this.sessionId}`);
     if (stored) {
       try {
         return JSON.parse(stored);
@@ -664,7 +664,7 @@ class CustomGPTWidget {
       // Load messages for the new conversation from widget store
       if (this.config.isolateConversations !== false && typeof window !== 'undefined') {
         // Get the widget's message store and load messages
-        const widgetStores = (window as any).__customgpt_widget_stores;
+        const widgetStores = (window as any).__immix_widget_stores;
         
         widgetDebugger.log('WIDGET', 'Accessing widget stores', {
           hasWidgetStores: !!widgetStores,
@@ -775,7 +775,7 @@ class CustomGPTWidget {
     
     // Use the conversation store to create a proper API conversation
     if (this.config.isolateConversations !== false && typeof window !== 'undefined') {
-      const widgetStores = (window as any).__customgpt_widget_stores;
+      const widgetStores = (window as any).__immix_widget_stores;
       if (widgetStores && widgetStores[this.sessionId]) {
         const conversationStore = widgetStores[this.sessionId].conversationStore;
         const messageStore = widgetStores[this.sessionId].messageStore;
@@ -808,7 +808,7 @@ class CustomGPTWidget {
               this.currentConversationId = widgetConversation.id;
               
               // Persist the conversation ID for widget mode
-              localStorage.setItem(`customgpt_widget_conversation_${this.config.agentId}`, widgetConversation.id.toString());
+              localStorage.setItem(`immix_widget_conversation_${this.config.agentId}`, widgetConversation.id.toString());
               
               // Don't clear messages - they should persist
               
@@ -844,7 +844,7 @@ class CustomGPTWidget {
     this.currentConversationId = newConversation.id;
     
     // Persist the conversation ID for widget mode
-    localStorage.setItem(`customgpt_widget_conversation_${this.config.agentId}`, newConversation.id.toString());
+    localStorage.setItem(`immix_widget_conversation_${this.config.agentId}`, newConversation.id.toString());
     
     // Increment refresh key to trigger ConversationManager update
     this.conversationRefreshKey++;
@@ -908,7 +908,7 @@ class CustomGPTWidget {
   private saveConversations(conversations: any[]): void {
     try {
       localStorage.setItem(
-        `customgpt_conversations_${this.sessionId}`,
+        `immix_conversations_${this.sessionId}`,
         JSON.stringify(conversations)
       );
     } catch (e) {
@@ -1006,13 +1006,13 @@ class CustomGPTWidget {
     
     // Clean up widget stores
     if (typeof window !== 'undefined') {
-      const widgetStores = (window as any).__customgpt_widget_stores;
+      const widgetStores = (window as any).__immix_widget_stores;
       if (widgetStores && widgetStores[this.sessionId]) {
         delete widgetStores[this.sessionId];
       }
       
       // Clean up widget instance references
-      const instances = (window as any).__customgpt_widget_instances;
+      const instances = (window as any).__immix_widget_instances;
       if (instances && instances[this.sessionId]) {
         delete instances[this.sessionId];
       }
@@ -1028,7 +1028,7 @@ class CustomGPTWidget {
     this.floatingButtonRoot = null;
   }
 
-  public updateConfig(newConfig: Partial<CustomGPTWidgetConfig>) {
+  public updateConfig(newConfig: Partial<ImmixWidgetConfig>) {
     this.config = { ...this.config, ...newConfig };
     
     // Re-render with new config
@@ -1056,29 +1056,29 @@ class CustomGPTWidget {
 // Global API for the widget
 declare global {
   interface Window {
-    CustomGPTWidget: {
-      init: (config: CustomGPTWidgetConfig) => CustomGPTWidget;
-      create: (config: CustomGPTWidgetConfig) => CustomGPTWidget;
+    ImmixWidget: {
+      init: (config: ImmixWidgetConfig) => ImmixWidget;
+      create: (config: ImmixWidgetConfig) => ImmixWidget;
     };
   }
 }
 
 // Export for UMD build
-const CustomGPTWidgetAPI = {
-  init: (config: CustomGPTWidgetConfig): CustomGPTWidget => {
-    return new CustomGPTWidget(config);
+const ImmixWidgetAPI = {
+  init: (config: ImmixWidgetConfig): ImmixWidget => {
+    return new ImmixWidget(config);
   },
   
-  create: (config: CustomGPTWidgetConfig): CustomGPTWidget => {
-    return new CustomGPTWidget(config);
+  create: (config: ImmixWidgetConfig): ImmixWidget => {
+    return new ImmixWidget(config);
   },
 };
 
 // Global assignment for browser usage
 if (typeof window !== 'undefined') {
-  window.CustomGPTWidget = CustomGPTWidgetAPI;
+  window.ImmixWidget = ImmixWidgetAPI;
 }
 
 // For module usage
-export { CustomGPTWidget, CustomGPTWidgetAPI };
-export default CustomGPTWidgetAPI;
+export { ImmixWidget, ImmixWidgetAPI };
+export default ImmixWidgetAPI;

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CustomGPT Widget</title>
+  <title>Immix Widget</title>
   <style>
     * {
       margin: 0;
@@ -90,7 +90,7 @@
     <div class="loading-container">
       <div>
         <div class="loading-spinner"></div>
-        <div class="loading-text">Loading CustomGPT...</div>
+        <div class="loading-text">Loading Immix...</div>
       </div>
     </div>
   </div>
@@ -98,7 +98,7 @@
   <!-- Error handling script -->
   <script>
     window.addEventListener('error', function(event) {
-      console.error('CustomGPT Widget Error:', event.error);
+      console.error('Immix Widget Error:', event.error);
       
       // Show error state
       document.getElementById('iframe-app').innerHTML = `
@@ -108,7 +108,7 @@
           </svg>
           <div class="error-title">Failed to Load Widget</div>
           <div class="error-message">
-            There was a problem loading the CustomGPT widget.<br>
+            There was a problem loading the Immix widget.<br>
             Please check your configuration and try again.
           </div>
         </div>
@@ -117,7 +117,7 @@
       // Notify parent of error
       if (window.parent && window.parent !== window) {
         window.parent.postMessage({
-          type: 'customgpt-error',
+          type: 'immix-error',
           data: {
             message: event.error?.message || 'Unknown error',
             stack: event.error?.stack
@@ -128,11 +128,11 @@
 
     // Handle unhandled promise rejections
     window.addEventListener('unhandledrejection', function(event) {
-      console.error('CustomGPT Widget Promise Rejection:', event.reason);
+      console.error('Immix Widget Promise Rejection:', event.reason);
       
       if (window.parent && window.parent !== window) {
         window.parent.postMessage({
-          type: 'customgpt-error',
+          type: 'immix-error',
           data: {
             message: event.reason?.message || 'Promise rejection',
             type: 'unhandledrejection'
@@ -144,7 +144,7 @@
     // Security: Only allow embedding from allowed origins (configure as needed)
     if (window.self !== window.top) {
       // We're in an iframe
-      console.log('CustomGPT Widget loaded in iframe');
+      console.log('Immix Widget loaded in iframe');
       
       // Add any iframe-specific security checks here
       // For example, you could check document.referrer or use postMessage to verify parent origin

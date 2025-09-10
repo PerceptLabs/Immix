@@ -1,7 +1,7 @@
 {
-  "name": "customgpt-ui",
+  "name": "immix-ui",
   "version": "1.0.0",
-  "description": "CustomGPT.ai Chat UI - Multi-format deployment (standalone, widget, embed)",
+  "description": "Immix Chat UI - A chat interface for local Llama.cpp models",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -35,7 +35,9 @@
     "framer-motion": "^10.16.16",
     "lucide-react": "^0.303.0",
     "next": "^14.0.4",
+    "node-llama-cpp": "^3.13.0",
     "openai": "^4.26.0",
+    "pocketbase": "^0.26.2",
     "posthog-js": "^1.261.6",
     "posthog-node": "^5.8.1",
     "react": "^18.2.0",
@@ -63,6 +65,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/react-syntax-highlighter": "^15.5.13",
+    "@types/supertest": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^6.17.0",
     "@typescript-eslint/parser": "^6.17.0",
     "autoprefixer": "^10.4.21",
@@ -76,6 +79,7 @@
     "postcss": "^8.5.6",
     "postcss-loader": "^7.3.4",
     "style-loader": "^4.0.0",
+    "supertest": "^7.1.4",
     "tailwindcss": "^3.4.17",
     "terser-webpack-plugin": "^5.3.14",
     "typescript": "^5",
@@ -88,15 +92,15 @@
     "npm": ">=8.0.0"
   },
   "keywords": [
-    "chatgpt",
-    "customgpt",
-    "ai",
+    "immix",
+    "llama",
+    "llamacpp",
     "chat",
     "ui",
     "react",
     "nextjs",
     "typescript"
   ],
-  "author": "CustomGPT.ai",
+  "author": "Immix",
   "license": "MIT"
 }

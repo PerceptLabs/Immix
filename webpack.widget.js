@@ -11,7 +11,7 @@ module.exports = (env, argv) => {
 
   return {
     entry: {
-      'customgpt-widget': './src/widget/index.tsx',
+      'immix-widget': './src/widget/index.tsx',
     },
     
     mode: isProduction ? 'production' : 'development',
@@ -22,7 +22,7 @@ module.exports = (env, argv) => {
       chunkFilename: isProduction ? '[name].[contenthash].chunk.js' : '[name].chunk.js',
       publicPath: '/',
       clean: true,
-      library: 'CustomGPTWidget',
+      library: 'ImmixWidget',
       libraryTarget: 'umd',
       libraryExport: 'default', // Export the default export
       globalObject: 'typeof self !== \'undefined\' ? self : this',
@@ -106,7 +106,7 @@ module.exports = (env, argv) => {
       new webpack.DefinePlugin({
         'process.env': {
           NODE_ENV: JSON.stringify(isProduction ? 'production' : 'development'),
-          NEXT_PUBLIC_API_BASE_URL: JSON.stringify(process.env.NEXT_PUBLIC_API_BASE_URL || 'https://app.customgpt.ai/api/v1'),
+          NEXT_PUBLIC_API_BASE_URL: JSON.stringify(process.env.NEXT_PUBLIC_API_BASE_URL || '/api'),
         },
         'process': {
           env: {

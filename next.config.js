@@ -43,7 +43,7 @@ const nextConfig = {
 
     return config;
   },
-  
+  serverComponentsExternalPackages: ['node-llama-cpp', 'pocketbase'],
   // Add proper headers for ONNX, WASM, and Audio Worklet files
   async headers() {
     return [
@@ -129,6 +129,7 @@ const nextConfig = {
 
   // This is required to support PostHog trailing slash API requests
   skipTrailingSlashRedirect: true,
+  transpilePackages: ['node-llama-cpp', 'pocketbase'],
 };
 
 module.exports = nextConfig;

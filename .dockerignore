@@ -1,4 +1,4 @@
-# Docker ignore file for CustomGPT UI
+# Docker ignore file for Immix UI
 # Optimizes build context and reduces image size
 
 # Dependencies

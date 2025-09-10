@@ -52,12 +52,12 @@ module.exports = {
         'sidebar-border': 'var(--sidebar-border)',
         'sidebar-hover': 'var(--sidebar-hover)',
         
-        // CustomGPT Brand Colors
-        'customgpt-primary': '#EE55FF',
-        'customgpt-secondary': '#7E76FF', 
-        'customgpt-accent': '#BCFCFF',
-        'customgpt-dark-blue': '#602ffc',
-        'customgpt-midtone': '#B9B4FF',
+        // Immix Brand Colors
+        'immix-primary': '#4f46e5',
+        'immix-secondary': '#7c3aed',
+        'immix-accent': '#a21caf',
+        'immix-dark-blue': '#312e81',
+        'immix-midtone': '#6d28d9',
         
         // Landing page specific colors
         'landing-bg': '#FFFFFF',

@@ -1,6 +1,6 @@
 /**
- * CustomGPT Iframe Embed Script
- * This script creates an iframe-based embedding solution for the CustomGPT widget
+ * Immix Iframe Embed Script
+ * This script creates an iframe-based embedding solution for the Immix widget
  * Provides better security isolation and cross-domain compatibility
  */
 
@@ -23,12 +23,12 @@
     iframeSrc: 'https://your-domain.com/widget/',
   };
 
-  class CustomGPTIframeWidget {
+  class ImmixIframeWidget {
     constructor(config) {
       // API key no longer required - handled by server
       
       if (!config.agentId) {
-        throw new Error('CustomGPT: Agent ID is required');
+        throw new Error('Immix: Agent ID is required');
       }
 
       this.config = { ...DEFAULT_CONFIG, ...config };
@@ -61,11 +61,11 @@
       if (mode === 'embedded' && containerId) {
         this.container = document.getElementById(containerId);
         if (!this.container) {
-          throw new Error(`CustomGPT: Container with id "${containerId}" not found`);
+          throw new Error(`Immix: Container with id "${containerId}" not found`);
         }
       } else {
         this.container = document.createElement('div');
-        this.container.id = 'customgpt-iframe-container';
+        this.container.id = 'immix-iframe-container';
         
         if (mode === 'floating') {
           this.setupFloatingStyles();
@@ -189,19 +189,19 @@
         const { type, data } = event.data;
 
         switch (type) {
-          case 'customgpt-ready':
+          case 'immix-ready':
             this.onReady();
             break;
-          case 'customgpt-resize':
+          case 'immix-resize':
             this.onResize(data);
             break;
-          case 'customgpt-message':
+          case 'immix-message':
             this.onMessage(data);
             break;
-          case 'customgpt-close':
+          case 'immix-close':
             this.close();
             break;
-          case 'customgpt-error':
+          case 'immix-error':
             this.onError(data);
             break;
         }
@@ -239,7 +239,7 @@
     }
 
     onError(error) {
-      console.error('CustomGPT Widget Error:', error);
+      console.error('Immix Widget Error:', error);
       if (this.config.onError) {
         this.config.onError(error);
       }
@@ -343,7 +343,7 @@
     postMessage(type, data = {}) {
       if (this.iframe && this.iframe.contentWindow) {
         this.iframe.contentWindow.postMessage({
-          type: `customgpt-${type}`,
+          type: `immix-${type}`,
           data
         }, '*');
       }
@@ -360,25 +360,25 @@
   }
 
   // Global API
-  const CustomGPTEmbed = {
+  const ImmixEmbed = {
     init: function(config) {
-      return new CustomGPTIframeWidget(config);
+      return new ImmixIframeWidget(config);
     },
 
     create: function(config) {
-      return new CustomGPTIframeWidget(config);
+      return new ImmixIframeWidget(config);
     }
   };
 
   // Export for different environments
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = CustomGPTEmbed;
+    module.exports = ImmixEmbed;
   } else if (typeof define === 'function' && define.amd) {
     define([], function() {
-      return CustomGPTEmbed;
+      return ImmixEmbed;
     });
   } else {
-    window.CustomGPTEmbed = CustomGPTEmbed;
+    window.ImmixEmbed = ImmixEmbed;
   }
 
 })();
